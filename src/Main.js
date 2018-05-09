@@ -4,23 +4,12 @@ import Home from './Home'
 import Ship from './Ship'
 import Order from './Order'
 import Profile from './Profile'
+import Login from './Login'
 
-// The Main component renders one of the three provided
-// Routes (provided that one matches). Both the /roster
-// and /schedule routes will match any pathname that starts
-// with /roster or /schedule. The / route will only match
-// when the pathname is exactly the string "/"
+// TODO: AQUÍ NO ES DONDE DEBERÍAN DE ESTAR TODOS LOS QUERIES DE INFO, NECESITAN ESTAR EN HOME Y DE AHÍ MANDAR COMO PROPS A LOS COMPONENTES CORRESPONDIENTES!!!
 
-// TODO: AQUÍ HAY QUE OBTENER TODA LA INFO RELATIVA AL USUARIO Y MANDAR LOS PROPS A LAS PÁGINAS CORRESPONDIENTES
-
-const userdata = {
-  userid : 1,
-  name : "John",
-  lastname : "Doe",
-  email : "john@doe.com"
-};
-
-const items = [
+// OBTENER ITEMS
+var items = [
   {
     id : 1, 
     userid : 1, // usuario al cual está ligado el producto
@@ -56,14 +45,71 @@ const items = [
   }
 ];
 
+var data = null;
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+    items = JSON.parse(this.responseText);
+    console.log(items);
+  }
+});
+
+
+
+xhr.open("GET", "http://ship-it.wake.mx/api/items");
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.setRequestHeader("X-USER", "donald@trump.us");
+xhr.setRequestHeader("Authorization", "Bearer WDLLQJFAisg1rjnPZn4zKZkcnoarc645W24ndSi3");
+xhr.setRequestHeader("Cache-Control", "no-cache");
+xhr.setRequestHeader("Postman-Token", "c4853c13-a33c-4a8f-9be5-55b29d2d1cfd");
+
+xhr.send(data);
+
+// OBTENER USER DATA
+// TODO: JONATHAN, TUS REPLIES DE USER NO ESTÁN INCLUYENDO EL USER ID! LO NECESITAMOS PARA FILTRAR LOS ELEMENTOS EN EL USER PROFILE
+var userdata = {
+  userid : 1,
+  name : "John",
+  lastname : "Doe",
+  email : "john@doe.com"
+};
+
+var userdata2 = null;
+
+var xhr2 = new XMLHttpRequest();
+xhr2.withCredentials = true;
+
+xhr2.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+    userdata2 = JSON.parse(this.responseText);
+  }
+});
+
+xhr2.open("GET", "http://ship-it.wake.mx/api/users/" + encodeURIComponent(userdata.email));
+xhr2.setRequestHeader("Content-Type", "application/json");
+xhr2.setRequestHeader("X-USER", userdata.email);
+xhr2.setRequestHeader("Authorization", "Bearer WDLLQJFAisg1rjnPZn4zKZkcnoarc645W24ndSi3");
+xhr2.setRequestHeader("Cache-Control", "no-cache");
+xhr2.setRequestHeader("Postman-Token", "a7b7f63c-da8e-401b-8374-6cee19958607");
+
+xhr2.send(data);
+
 const cities = ["CDMX", "GDL", "MTY"];
 
 const Main = () => (
   <main>
     <Switch>
-      
+
       {/* name */}
-      <Route exact path='/' component={Home}/>
+      <Route exact path='/home' render={()=><Home cities={cities} userdata={userdata} items={items}/>}/>
+
+      {/* N/A */}
+      <Route exact path='/' component={Login}/>
 
       {/* to, from, todos los productos currently available */}
       {/* <Route exact path='/ship' component={Ship}/> */}
@@ -74,7 +120,7 @@ const Main = () => (
       <Route exact path='/order' render={()=><Order cities={cities} userdata={userdata}/>}/>
 
       {/* name, lastname, email */}
-      <Route exact path='/profile' render={()=><Profile userdata={userdata}/>}/>
+      <Route exact path='/profile' render={()=><Profile userdata={userdata} items={items}/>}/>
       
     </Switch>
   </main>

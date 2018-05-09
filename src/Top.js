@@ -5,7 +5,7 @@ const Top = () => (
   <div className="row">
     
     <div className="col-12 col-md-6">
-      <Link to='/'><h3 className="text-left"><a class="float-left"><i className="fas fa-home"></i> Home</a></h3></Link>
+      <Link to='/home'><h3 className="text-left"><a class="float-left"><i className="fas fa-home"></i> Home</a></h3></Link>
     </div>
 
     <div className="col-12 col-md-6">
